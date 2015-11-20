@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{%block content %}
+{% if status %}
+<p>{{ status }}</p>
+{% endif %}
+<form action="index.php?site=delete-pricegroup-submit" method="post">
+	<select name="selectid">
+		{% for pricegroup in pricegroups %}
+			<option value="{{ pricegroup.ID }}">{{ pricegroup.name }} </option>
+		{% endfor %}
+	</select>
+	<button type="submit">Löschen</button>
+</form>
+{%endblock content %}
