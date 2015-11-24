@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+
+{%block content %}
+<h1>Neue Preisgruppe erstellen</h1>
+{% if status %}
+<p>{{ status }}</p>
+{% endif %}
+<form action="index.php?site=create-pricegroup-submit" method="post">
+	<div class="form-group">
+		<label for="name">Name</label>
+		<input class="form-control" type="text" id="name" name="name" placeholder="Erwachsene" maxlength="20" required >
+	</div>
+	<div class="form-group">
+		<label for="price">Preis</label>
+		<input class="form-control" type="text" id="price" name="price" placeholder="15" maxlength="20" required >
+	</div>
+	<button type="submit" class="btn btn-default">Submit</button>
+</form>
+{%endblock content %}

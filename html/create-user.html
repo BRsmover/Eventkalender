@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+
+{%block content %}
+<h1>Neuen Benutzer erstellen</h1>
+{% if status %}
+<p>{{ status }}</p>
+{% endif %}
+<form action="index.php?site=create-user-submit" method="post">
+	<div class="form-group">
+		<label for="name">Benutzername</label>
+		<input class="form-control" type="text" id="name" name="name" placeholder="foobar" maxlength="20" required >
+	</div>
+	<div class="form-group">
+		<label for="password">Passwort</label>
+		<input class="form-control" type="password" id="password" name="password" placeholder="********" maxlength="20" required >
+	</div>
+	<button type="submit" class="btn btn-default">Submit</button>
+</form>
+{%endblock content %}
