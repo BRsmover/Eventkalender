@@ -1,13 +1,17 @@
 <?php
 
+// Require the Twig Autoloader
 require_once('libraries/Twig/lib/Twig/Autoloader.php');
+// Require the functions
 require_once('functions.php');
+// Require the config (MYSQL)
 require_once('config.php');
 
 Twig_Autoloader::register();
 
 $site = getSite();
 
+// Different actions for different sites ----------------------------- ?Switch?
 if(isUserLoggedIn()) {
 	if($site == "home") {
 		echo(parseSite('home', array()));
@@ -36,12 +40,18 @@ if(isUserLoggedIn()) {
 		echo(parseSite('create-user-submit', array(createUser())));
 	}
 
+	else if ($site == 'create-event') {
+		echo(parseSite('create-event', array()));
+	}
+
+	else if ($site == 'create-event-submit') {
+		echo(parseSite('create-event-submit', array(createEvent())));
+	}
+
 	else {
 		echo(parseSite('error', array()));
 	}
-}
-else
-{
+} else {
 	if(hasUserLoginCredentials())
 	{
 		if(login())
