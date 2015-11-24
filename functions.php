@@ -96,12 +96,10 @@ function createEvent() {
 		$dauer = $_POST['dauer'];
 
 		// Getting path of file
+// 		file_put_contents('files.txt', var_dump($_FILES));
+// 		file_put_contents('file.txt', $_FILES[$bild]["tmp_name"]);
 		$bild = $_POST['bild'];
-		if(is_uploaded_file($bild)) {
-			$handle = fopen($_FILES[$bild]["tmp_name"], 'r');
-		} else {
-			return 'Failed to upload file!';
-		}
+		$handle = fopen($_FILES[$bild]["tmp_name"], 'r');
 
 		$bildbeschreibung = $_POST['bildbeschreibung'];
 		$link = $_POST['link'];
