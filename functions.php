@@ -35,8 +35,9 @@ function deletePriceGroup() {
 	if($connection->query("DELETE from preisgruppe where ID='" . $id . "';") === TRUE) {
 		return 'Preiskategorie wurde erfolgreich gelöscht!';
 	} else {
-		return 'Preiskategorie konnte nicht gelöscht werden!';
-	}
+		// Go to error page
+		header("Location: index.php?site=error");
+		die();	}
 }
 
 // Insert pricgroup
@@ -47,7 +48,9 @@ function createPriceGroup() {
 	if($connection->query("INSERT INTO preisgruppe (name, preis) VALUES ('$name', '$price')")) {
 		return 'Preisgruppe wurde erfolgreich hinzugefügt!';
 	} else {
-		return 'Preisgruppe konnte nicht hinzugefügt werden!';
+		// Go to error page
+		header("Location: index.php?site=error");
+		die();
 	}
 }
 
@@ -69,19 +72,26 @@ function createUser() {
 			if($connection->query("INSERT INTO benutzer (benutzername, passwort) VALUES ('$username', '$newpw')")) {
 				return 'Benutzer wurde erfolgreich erstellt!';
 			} else {
-				return 'Benutzer konnte nicht erstellt werden!';
+				// Go to error page
+				header("Location: index.php?site=error");
+				die();
 			}
 		} else {
-			return 'Das Passwort ist nicht komplex genug!';
+			// Go to error page
+			header("Location: index.php?site=error");
+			die();
 		}
 	} else {
-		return 'Bitte füllen Sie alle Felder aus!';
+		// Go to error page
+		header("Location: index.php?site=error");
+		die();
 	}
 }
 
 // Create event
 function createEvent() {
-	if(isset($_POST['name']) && isset($_POST['beschreibung']) && isset($_POST['termin']) && isset($_POST['dauer']) && isset($_POST['bild']) && isset($_POST['bildbeschreibung']) && isset($_POST['link']) && isset($_POST['linkbeschreibung']) && isset($_POST['genre_id'])) {
+	// Check if necessary fields are set
+	if(isset($_POST['name']) && isset($_POST['beschreibung']) && isset($_POST['termin']) && isset($_POST['dauer']) && isset($_FILES) && isset($_POST['bildbeschreibung']) && isset($_POST['link']) && isset($_POST['linkbeschreibung']) && isset($_POST['genre_id'])) {
 		$name = $_POST['name'];
 
 		// Check if 'besetzung' is set, if not make it an empty string
@@ -95,24 +105,40 @@ function createEvent() {
 		$termin = $_POST['termin'];
 		$dauer = $_POST['dauer'];
 
-		// Getting path of file
-// 		file_put_contents('files.txt', var_dump($_FILES));
-// 		file_put_contents('file.txt', $_FILES[$bild]["tmp_name"]);
-		$bild = $_POST['bild'];
-		$handle = fopen($_FILES[$bild]["tmp_name"], 'r');
+		// Check if filetype is an image
+		$allowed = array('image/jpeg', 'image/png', 'image/jpg');
+		$filetype = $_FILES['bild']['type'];
+		if (in_array($filetype, $allowed)) {
+			// Getting path of file
+			$uploaddir = 'files/';
+			$uploadfile = $uploaddir . basename($_FILES['bild']['name']);
+			// Move file to files/
+			if (move_uploaded_file($_FILES['bild']['tmp_name'], $uploadfile)) {
+				echo 'Datei ist valide und wurde erfolgreich hochgeladen.';
+			} else {
+				// Go to error page
+				header("Location: index.php?site=error");
+				die();
+			}
+		} else {
+			// Go to error page
+			header("Location: index.php?site=error");
+			die();
+		}
 
 		$bildbeschreibung = $_POST['bildbeschreibung'];
 		$link = $_POST['link'];
 		$linkbeschreibung = $_POST['linkbeschreibung'];
 		$genre_id = $_POST['genre_id'];
 
-		// SQL-Query
+		// SQL-Query to insert event
 		$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
-		if($connection->query("INSERT INTO veranstaltung (name, besetzung, beschreibung, termin, dauer, bild, bildbeschreibung, link, linkbeschreibung, fk_genre_id) VALUES ('$name', '$besetzung', '$beschreibung', '$termin', $dauer, '$bild', '$bildbeschreibung', '$link', '$linkbeschreibung', $genre_id)")) {
+		if($connection->query("INSERT INTO veranstaltung (name, besetzung, beschreibung, termin, dauer, bild, bildbeschreibung, link, linkbeschreibung, fk_genre_id) VALUES ('$name', '$besetzung', '$beschreibung', '$termin', $dauer, '$uploadfile', '$bildbeschreibung', '$link', '$linkbeschreibung', $genre_id)")) {
 			return 'Veranstaltung wurde erfolgreich erstellt!';
 		} else {
-// 			return 'Veranstaltung konnte nicht erstellt werden!';
-			file_put_contents('fail.txt', 'Query failed!');
+			// Go to error page
+			header("Location: index.php?site=error");
+			die();
 		}
 	}
 }

@@ -5,7 +5,7 @@
 {% if status %}
 <p>{{ status }}</p>
 {% endif %}
-<form action="index.php?site=create-event-submit" method="post">
+<form enctype="multipart/form-data" action="index.php?site=create-event-submit" method="post">
 	<div class="form-group">
 		<label for="name">Name</label>
 		<input class="form-control" type="text" id="name" name="name" placeholder="Veranstaltungsname" maxlength="100" required >
