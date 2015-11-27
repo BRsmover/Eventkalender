@@ -1,4 +1,6 @@
 <?php
+// Start session
+session_start();
 
 // Require the Twig Autoloader
 require_once('libraries/Twig/lib/Twig/Autoloader.php');
@@ -48,23 +50,25 @@ if(isUserLoggedIn()) {
 		echo(parseSite('create-event-submit', array(createEvent())));
 	}
 
+	else if ($site == 'login') {
+		echo(parseSite('login', array()));
+	}
+
+	else if ($site == 'login-submit') {
+		echo(parseSite('login-submit', array(login())));
+	}
+
 	else {
 		echo(parseSite('error', array()));
-	}
+	} 
 } else {
-	if(hasUserLoginCredentials())
-	{
-		if(login())
-		{
+	if(hasUserLoginCredentials()) {
+		if(login()) {
 			// redirect home
-		}
-		else
-		{
+		} else {
 			echo(parseSite('login', array("error" => "Ihre Logindaten stimmen nicht")));
 		}
-	}
-	else
-	{
+	} else {
 		echo(parseSite('login', array()));
 	}
 }

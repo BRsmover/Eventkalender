@@ -143,8 +143,13 @@ function createEvent() {
 	}
 }
 
+// Check if user is logged in
 function isUserLoggedIn() {
-	return true;
+	//if ($_SESSION['loggedin'] == true) {
+		return true;
+// 	} else {
+// 	return false;
+// 	}
 }
 
 function hasUserLoginCredentials() {
@@ -152,7 +157,28 @@ function hasUserLoginCredentials() {
 }
 
 function login() {
-	return false;
+	if(isset($_POST['username']) && isset($_POST['password'])) {
+		$username = $_POST['username'];
+		$password = $_POST['password'];
+
+		// Save username in session
+		$_SESSION['username'] = $username;
+
+		// Get hash from db
+		$sql = "SELECT password FROM users WHERE benutzername = '$username'";
+		$result = $mysqli->query($sql);
+
+		$verification = password_verify($password, $result);
+		if ($verification) {
+			$_SESSION['loggedin'] = true;
+			header("Location: index.php?site=admin");
+			die();
+		} else {
+			$_SESSION['loggedin'] = false;
+			header("Location: index.php?site=error");
+			die();
+		}
+	}
 }
 
 ?>
