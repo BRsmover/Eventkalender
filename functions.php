@@ -17,7 +17,18 @@ function parseSite($site, $data) {
 	return $template->render($data);
 }
 
-// Get all pricgroups
+// Get all Events
+function getEvents() {
+	$data = array();
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	$result = $connection->query("SELECT * from veranstaltung");
+    while($row = $result->fetch_assoc()) {
+		$data[] = $row;
+    }
+    return $data;
+}
+
+// Get all pricegroups
 function getPriceGroups() {
 	$data = array();
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);

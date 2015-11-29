@@ -16,7 +16,7 @@ $site = getSite();
 // Different actions for different sites ----------------------------- ?Switch?
 if(isUserLoggedIn()) {
 	if($site == "home") {
-		echo(parseSite('home', array()));
+		echo(parseSite('home', array(getEvents())));
 	}
 
 	else if($site == "delete-pricegroup") {
@@ -56,6 +56,10 @@ if(isUserLoggedIn()) {
 
 	else if ($site == 'login-submit') {
 		echo(parseSite('login-submit', array(login())));
+	}
+
+	else if ($site == 'about') {
+		echo(parseSite('about', array()));
 	}
 
 	else {

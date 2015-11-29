@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h1>Eventkalender</h1>
+{% for veranstaltung in veranstaltungen %} <!-- Bezeichnungen für Spalten anpassen -->
+	<div class="row">
+		<div class="col-sm-6 col-md-4">
+			<div class="thumbnail">
+				<img src="veranstaltung.bild" alt="Bild des Events">
+			<div class="caption">
+				<p>{{ veranstaltung.bild-beschreibung }}</p>
+				<h3>{{ veranstaltung.name }}</h3>
+				<p><b>Beschreibung<b></p>
+				{% if veranstaltung.besetzung > 1 %}
+					<p><b>Besetzung</b></p>
+					<p>{{ veranstaltung.besetzung }}</p>
+				{% endif %}
+				<p>Preisgruppen </p> <!-- Preisgruppen anzeigen -->
+				<p>Dauer: {{ veranstaltung.dauer }}</p>
+				<p><a href="{{ veranstaltung.link }}">{{ veranstaltung.link-beschreibung }}</a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+{% endblock content %}
