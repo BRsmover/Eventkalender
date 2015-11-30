@@ -70,7 +70,7 @@ function createUser() {
 	if(isset($_POST['username']) && isset($_POST['password'])) {
 		$username = $_POST['username'];
 		$password = $_POST['password'];
-		file_put_contents('login.txt', 'user: ' . $username . ' password: ' . $password);
+// 		file_put_contents('login.txt', 'user: ' . $username . ' password: ' . $password);
 
 		$uppercase = preg_match('@[A-Z]@', $password);
 		$lowercase = preg_match('@[a-z]@', $password);
@@ -167,19 +167,24 @@ function hasUserLoginCredentials() {
 	return true;
 }
 
+// Login
 function login() {
 	if(isset($_POST['username']) && isset($_POST['password'])) {
 		$username = $_POST['username'];
+// 		$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 		$password = $_POST['password'];
 
 		// Save username in session
 		$_SESSION['username'] = $username;
 
 		// Get hash from db
-		$sql = "SELECT password FROM users WHERE benutzername = '$username'";
-		$result = $mysqli->query($sql);
+		$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+		$sql = "SELECT passwort FROM benutzer WHERE benutzername = '$username'";
+		$result = $connection->query($sql);
 
-		$verification = password_verify($password, $result);
+		$hash = getHash($result);
+		$verification = password_verify($password, $hash);
+		file_put_contents('verification.txt', 'ergebnis: ' . $verification . ' passwort: ' . $password . ' hash: ' . $hash);
 		if ($verification) {
 			$_SESSION['loggedin'] = true;
 			header("Location: index.php?site=admin");
@@ -189,6 +194,14 @@ function login() {
 			header("Location: index.php?site=error");
 			die();
 		}
+	}
+}
+
+// Get string from sql-query
+function getHash($result) {
+	while($row = mysqli_fetch_assoc($result)) {
+		$result = $row["passwort"];
+		return $result;
 	}
 }
 
