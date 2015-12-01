@@ -33,17 +33,17 @@ function getPriceGroups() {
 	$data = array();
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 	$result = $connection->query("SELECT * from preisgruppe");
-    while($row = $result->fetch_assoc()) {
+	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
-    }
-    return $data;
+	}
+	return $data;
 }
 
 // Delete pricegroup
 function deletePriceGroup() {
 	$id = $_POST['selectid'];
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
-	if($connection->query("DELETE from preisgruppe where ID='" . $id . "';") === TRUE) {
+	if($connection->query("DELETE from preisgruppe where ID='$id'") === TRUE) {
 		return 'Preiskategorie wurde erfolgreich gelöscht!';
 	} else {
 		// Go to error page
@@ -51,7 +51,7 @@ function deletePriceGroup() {
 		die();	}
 }
 
-// Insert pricgroup
+// Insert pricegroup
 function createPriceGroup() {
 	$name = $_POST['name'];
 	$price = $_POST['price'];
@@ -63,6 +63,42 @@ function createPriceGroup() {
 		header("Location: index.php?site=error");
 		die();
 	}
+}
+
+// Insert genre
+function createGenre() {
+	$name = $_POST['name'];
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	if($connection->query("INSERT INTO genre (name) VALUES ('$name')")) {
+		return 'Genre wurde erfolgreich hinzugefügt!';
+	} else {
+		// Go to error page
+		header("Location: index.php?site=error");
+		die();
+	}
+}
+
+// Get all genres
+function getGenres() {
+	$data = array();
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	$result = $connection->query("SELECT * from genre");
+	while($row = $result->fetch_assoc()) {
+		$data[] = $row;
+	}
+	return $data;
+}
+
+// Delete genre
+function deleteGenre() {
+	$id = $_POST['selectid'];
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	if($connection->query("DELETE from genre where id='" . $id . "';") === TRUE) {
+		return 'Genre wurde erfolgreich gelöscht!';
+	} else {
+		// Go to error page
+		header("Location: index.php?site=error");
+		die();	}
 }
 
 // Create user
@@ -124,15 +160,18 @@ function createEvent() {
 			$uploaddir = 'files/';
 			$uploadfile = $uploaddir . basename($_FILES['bild']['name']);
 			// Move file to files/
-			if (move_uploaded_file($_FILES['bild']['tmp_name'], $uploadfile)) {
-				echo 'Datei ist valide und wurde erfolgreich hochgeladen.';
+			$moveFile = move_uploaded_file($_FILES['bild']['tmp_name'], $uploadfile);
+			if ($moveFile) {
+// 				echo 'Datei ist valide und wurde erfolgreich hochgeladen.';
 			} else {
 				// Go to error page
+				file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile);
 				header("Location: index.php?site=error");
 				die();
 			}
 		} else {
 			// Go to error page
+			file_put_contents('image-not-valid.txt', "Image ain't valid!");
 			header("Location: index.php?site=error");
 			die();
 		}
@@ -145,8 +184,24 @@ function createEvent() {
 		// SQL-Query to insert event
 		$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 		if($connection->query("INSERT INTO veranstaltung (name, besetzung, beschreibung, termin, dauer, bild, bildbeschreibung, link, linkbeschreibung, fk_genre_id) VALUES ('$name', '$besetzung', '$beschreibung', '$termin', $dauer, '$uploadfile', '$bildbeschreibung', '$link', '$linkbeschreibung', $genre_id)")) {
+
+			// SQL-Query to get last id
+			$result = $connection->query("SELECT id FROM veranstaltung WHERE id=(SELECT max(id) FROM veranstaltung)");
+			file_put_contents('id.txt', getId($result));
+
+			// SQL-Query to insert entries in "veranstaltung_hat_preisgruppe"
+			$pricegroups = getPriceGroups();
+			for(pricegroup in pricegroups) {
+				if(isset($_POST['pricegroup.ID'])) {
+					
+				} else {
+					header("Location: index.php?site=error");
+					die();
+				}
+
 			return 'Veranstaltung wurde erfolgreich erstellt!';
 		} else {
+			file_put_contents('event-fail.txt', "Event wasn't created...");
 			// Go to error page
 			header("Location: index.php?site=error");
 			die();
@@ -156,11 +211,11 @@ function createEvent() {
 
 // Check if user is logged in
 function isUserLoggedIn() {
-	//if ($_SESSION['loggedin'] == true) {
+if ($_SESSION['loggedin'] == true) {
 		return true;
-// 	} else {
-// 	return false;
-// 	}
+ 	} else {
+ 	return false;
+ 	}
 }
 
 function hasUserLoginCredentials() {
@@ -171,7 +226,6 @@ function hasUserLoginCredentials() {
 function login() {
 	if(isset($_POST['username']) && isset($_POST['password'])) {
 		$username = $_POST['username'];
-// 		$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 		$password = $_POST['password'];
 
 		// Save username in session
@@ -201,6 +255,14 @@ function login() {
 function getHash($result) {
 	while($row = mysqli_fetch_assoc($result)) {
 		$result = $row["passwort"];
+		return $result;
+	}
+}
+
+// Get string from sql-query
+function getId($result) {
+	while($row = mysqli_fetch_assoc($result)) {
+		$result = $row["id"];
 		return $result;
 	}
 }

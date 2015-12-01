@@ -1,32 +1,32 @@
-{% extends "index.php" %}
+{% extends "index.html" %}
 
 {% block content%}
-	<h1>Admin</h1>
+	<h1>Administrationsbereich</h1>
 	<a href='index.php?site=logout'>Logout</a><br />
 	<div class="btn-toolbar" role="toolbar" aria-label="toolbar">
 		<h2>Events</h2>
 		<div class="btn-group" role="group" aria-label="event">
-			<button class="btn btn-default"><a href="index.php?site=create-event">Neue Veranstaltung</a></button>
-			<button class="btn btn-default"><a href="index.php?site=edit-event">Veranstaltung bearbeiten</a></button>
-			<button class="btn btn-default"><a href="index.php?site=delete-event">Veranstaltung löschen</a></button>
+			<a class="btn btn-default" href="index.php?site=create-event">Neue Veranstaltung</a>
+			<a class="btn btn-default" href="index.php?site=edit-event">Veranstaltung bearbeiten</a>
+			<a class="btn btn-default" href="index.php?site=delete-event">Veranstaltung löschen</a>
 		</div>
 		<br />
 		<h2>Genres</h2>
 		<div class="btn-group" role="group" aria-label="genre">
-			<button class="btn btn-default"><a href="index.php?site=create-genre">Neues Genre</a></button>
-			<button class="btn btn-default"><a href="index.php?site=delete-genre">Genre löschen</a></button>
+			<a class="btn btn-default" href="index.php?site=create-genre">Neues Genre</a>
+			<a class="btn btn-default" href="index.php?site=delete-genre">Genre löschen</a>
 		</div>
 		<br />
 		<h2>Preisgruppen</h2>
 		<div class="btn-group" role="group" aria-label="pricegroup">
-			<button class="btn btn-default"><a href="index.php?site=create-pricegroup">Neue Preisgruppe</a></button>
-			<button class="btn btn-default"><a href="index.php?site=delete-pricegroup">Preisgruppe löschen</a></button>
+			<a class="btn btn-default" href="index.php?site=create-pricegroup">Neue Preisgruppe</a>
+			<a class="btn btn-default" href="index.php?site=delete-pricegroup">Preisgruppe löschen</a>
 		</div>
 		<br />
 		<h2>Benutzer</h2>
 		<div class="btn-group" role="group" aria-label="user">
-			<button class="btn btn-default"><a href="index.php?site=create-user">Neuer Benutzer</a></button>
-			<button class="btn btn-default"><a href="index.php?site=change-password">Passwort ändern</a></button>
+			<a class="btn btn-default" href="index.php?site=create-user">Neuer Benutzer</a>
+			<a class="btn btn-default" href="index.php?site=change-password">Passwort ändern</a>
 		</div>
 	</div>
 {% endblock content %}

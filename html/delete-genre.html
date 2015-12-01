@@ -1,16 +1,16 @@
 {% extends "index.html" %}
 
 {%block content %}
-<h1>Preisgruppe löschen</h1>
+<h1>Genre löschen</h1>
 {% if status %}
 <p>{{ status }}</p>
 {% endif %}
-<form action="index.php?site=delete-pricegroup-submit" method="post">
+<form action="index.php?site=delete-genre-submit" method="post">
 	<select class="form-control" name="selectid">
-		{% for pricegroup in pricegroups %}
-			<option value="{{ pricegroup.ID }}">{{ pricegroup.name }} </option>
+		{% for genre in genres %}
+			<option value="{{ genre.id }}">{{ genre.name }} </option>
 		{% endfor %}
 	</select>
 	<button class="btn btn-default" type="submit">Löschen</button>
 </form>
-{% endblock content %}
+{%endblock content %}
