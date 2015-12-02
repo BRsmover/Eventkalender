@@ -191,13 +191,14 @@ function createEvent() {
 
 			// SQL-Query to insert entries in "veranstaltung_hat_preisgruppe"
 			$pricegroups = getPriceGroups();
-			for(pricegroup in pricegroups) {
+			foreach($pricegroups as $pricegroup) {
 				if(isset($_POST['pricegroup.ID'])) {
-					
+					// Ist das effektiv? SW fragen...
 				} else {
 					header("Location: index.php?site=error");
 					die();
 				}
+			}
 
 			return 'Veranstaltung wurde erfolgreich erstellt!';
 		} else {
@@ -211,11 +212,11 @@ function createEvent() {
 
 // Check if user is logged in
 function isUserLoggedIn() {
-if ($_SESSION['loggedin'] == true) {
+// if ($_SESSION['loggedin'] == true) {
 		return true;
- 	} else {
- 	return false;
- 	}
+//  	} else {
+//  	return false;
+//  	}
 }
 
 function hasUserLoginCredentials() {
