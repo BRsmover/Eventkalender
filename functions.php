@@ -193,7 +193,7 @@ function createEvent() {
 			$pricegroups = getPriceGroups();
 			foreach($pricegroups as $pricegroup) {
 				if(isset($_POST['pricegroup.ID'])) {
-					// Ist das effektiv? SW fragen...
+					// Ist das effektiv?
 				} else {
 					header("Location: index.php?site=error");
 					die();
