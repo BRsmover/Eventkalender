@@ -20,8 +20,9 @@ function parseSite($site, $data) {
 // Get all Events
 function getEvents() {
 	$data = array();
+	$date = gmdate('Y-m-d h:i:s \G\M\T');
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
-	$result = $connection->query("SELECT * from veranstaltung");
+	$result = $connection->query("SELECT * from veranstaltung WHERE termin > '$date'");
 	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
 	}
