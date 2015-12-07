@@ -350,7 +350,6 @@ function changePw() {
 	}
 }
 
-
 // Delete event
 function deleteEvent() {
 	$id = $_POST['selectid'];
@@ -365,4 +364,10 @@ function deleteEvent() {
 	}
 }
 
+// Logout
+function logout() {
+	session_destroy();
+	header("Location: index.php?site=login");
+	die();
+}
 ?>

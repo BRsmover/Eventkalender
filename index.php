@@ -107,6 +107,11 @@ if(isUserLoggedIn()) {
 		echo(parseSite('delete-event', array("status" => deleteEvent(), "events" => getEvents())));
 	}
 
+	// Logout
+	else if ($site == 'logout') {
+		echo(parseSite('logout', array(logout())));
+	}
+
 	else {
 		echo(parseSite('error', array()));
 	} 
