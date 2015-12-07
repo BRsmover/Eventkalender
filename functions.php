@@ -43,12 +43,24 @@ function getPriceGroups() {
 function deletePriceGroup() {
 	$id = $_POST['selectid'];
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
-	if($connection->query("DELETE from preisgruppe where ID='$id'") === TRUE) {
-		return 'Preiskategorie wurde erfolgreich gelöscht!';
+	$result = $connection->query("SELECT fk_preisgruppe_id FROM veranstaltung_hat_preisgruppe WHERE fk_preisgruppe_id = '$id'");
+	$usage = $result->num_rows;
+	file_put_contents('usage.txt', $usage);
+	if($usage == 0) {
+		if($connection->query("DELETE from preisgruppe where ID='$id'") === TRUE) {
+			return 'Preiskategorie wurde erfolgreich gelöscht!';
+		} else {
+			file_put_contents('query.txt', 'fail');
+			// Go to error page
+			header("Location: index.php?site=error");
+			die();
+		}
 	} else {
+		file_put_contents('used.txt', 'fail');
 		// Go to error page
 		header("Location: index.php?site=error");
-		die();	}
+		die();
+	}
 }
 
 // Insert pricegroup
@@ -93,12 +105,21 @@ function getGenres() {
 function deleteGenre() {
 	$id = $_POST['selectid'];
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
-	if($connection->query("DELETE from genre where id='" . $id . "';") === TRUE) {
-		return 'Genre wurde erfolgreich gelöscht!';
+	$result = $connection->query("SELECT name FROM veranstaltung WHERE fk_genre_id = '$id'");
+	$usage = $result->num_rows;
+	if($usage == 0) {
+		if($connection->query("DELETE from genre where id='" . $id . "';") === TRUE) {
+			return 'Genre wurde erfolgreich gelöscht!';
+		} else {
+			// Go to error page
+			header("Location: index.php?site=error");
+			die();
+		}
 	} else {
 		// Go to error page
 		header("Location: index.php?site=error");
-		die();	}
+		die();
+	}
 }
 
 // Create user
