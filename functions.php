@@ -186,23 +186,29 @@ function createEvent() {
 		if($connection->query("INSERT INTO veranstaltung (name, besetzung, beschreibung, termin, dauer, bild, bildbeschreibung, link, linkbeschreibung, fk_genre_id) VALUES ('$name', '$besetzung', '$beschreibung', '$termin', $dauer, '$uploadfile', '$bildbeschreibung', '$link', '$linkbeschreibung', $genre_id)")) {
 
 			// SQL-Query to get last id
-			$result = $connection->query("SELECT id FROM veranstaltung WHERE id=(SELECT max(id) FROM veranstaltung)");
-			file_put_contents('id.txt', getId($result));
+			$resultId = $connection->query("SELECT id FROM veranstaltung WHERE id=(SELECT max(id) FROM veranstaltung)");
+ 			file_put_contents('id.txt', getId($resultId));
 
 			// SQL-Query to insert entries in "veranstaltung_hat_preisgruppe"
 			$pricegroups = getPriceGroups();
+			$veranstaltungId = getId($resultId);
+//  			var_dump($pricegroups);
 			foreach($pricegroups as $pricegroup) {
-				if(isset($_POST['pricegroup.ID'])) {
-					// Ist das effektiv?
-				} else {
-					header("Location: index.php?site=error");
-					die();
+				if(isset($_POST[$pricegroup['ID']])) {
+					$pricegroupId = $pricegroup['ID'];
+					$insert = $connection->query("INSERT INTO veranstaltung_hat_preisgruppe (fk_preisgruppe_id, fk_veranstaltung_id) VALUES ('$pricegroupId', '$veranstaltungId')");
+					if($insert == false) {
+						file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltungId . " pricegroupId: " . $pricegroupId);
+						// Go to error page
+						header("Location: index.php?site=error");
+						die();
+					}
 				}
 			}
 
 			return 'Veranstaltung wurde erfolgreich erstellt!';
 		} else {
-			file_put_contents('event-fail.txt', "Event wasn't created...");
+			file_put_contents('event-creation-fail.txt', "Event wasn't created...");
 			// Go to error page
 			header("Location: index.php?site=error");
 			die();
