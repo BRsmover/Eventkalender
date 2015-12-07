@@ -238,15 +238,7 @@ function login() {
 		// Save username in session
 		$_SESSION['username'] = $username;
 
-		// Get hash from db
-		$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
-		$sql = "SELECT passwort FROM benutzer WHERE benutzername = '$username'";
-		$result = $connection->query($sql);
-
-		$hash = getHash($result);
-		$verification = password_verify($password, $hash);
-		file_put_contents('verification.txt', 'ergebnis: ' . $verification . ' passwort: ' . $password . ' hash: ' . $hash);
-		if ($verification) {
+		if(verify($username, $password)) {
 			$_SESSION['loggedin'] = true;
 			header("Location: index.php?site=admin");
 			die();
@@ -255,6 +247,23 @@ function login() {
 			header("Location: index.php?site=error");
 			die();
 		}
+	}
+}
+
+// Verify password
+function verify($username, $password) {
+	// Get hash from db
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	$sql = "SELECT passwort FROM benutzer WHERE benutzername = '$username'";
+	$result = $connection->query($sql);
+
+	$hash = getHash($result);
+	$verification = password_verify($password, $hash);
+// 	file_put_contents('verification.txt', 'ergebnis: ' . $verification . ' passwort: ' . $password . ' hash: ' . $hash);
+	if ($verification) {
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -271,6 +280,38 @@ function getId($result) {
 	while($row = mysqli_fetch_assoc($result)) {
 		$result = $row["id"];
 		return $result;
+	}
+}
+
+// Change password
+function changePw() {
+	$username = $_SESSION['username'];
+	$password = $_POST['password'];
+	$newPasswordOne = $_POST['newPasswordOne'];
+	$newPasswordTwo = $_POST['newPasswordTwo'];
+// 	file_put_contents('passwords.txt', 'user: ' . $username . ' old: ' . $password . ' new1: ' . $newPasswordOne . ' new2: ' . $newPasswordTwo . ' verification: ' . verify($username, $password));
+
+	if(verify($username, $password)) {
+		if($newPasswordOne == $newPasswordTwo && $password != $newPasswordOne) {
+			$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+			$newPasswordOne = password_hash($newPasswordOne, PASSWORD_DEFAULT);
+			if($connection->query("UPDATE benutzer SET passwort = '$newPasswordOne' WHERE benutzername = '$username'")) {
+				return 'Das Passwort wurde erfolgreich geändert!';
+			} else {
+// 			file_put_contents('query-failed.txt', 'fail');
+			// Query failed
+				header("Location: index.php?site=error");
+				die();
+			}
+		} else {
+			// New pw's don't match or are the same as the old one
+			header("Location: index.php?site=error");
+			die();
+		}
+	} else {
+		// Old pw is incorrect
+		header("Location: index.php?site=error");
+		die();
 	}
 }
 

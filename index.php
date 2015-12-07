@@ -15,10 +15,12 @@ $site = getSite();
 
 // Different actions for different sites ----------------------------- ?Switch?
 if(isUserLoggedIn()) {
+	// Home
 	if($site == "home") {
 		echo(parseSite('home', array(getEvents())));
 	}
 
+	// Delete pricegroup
 	else if($site == "delete-pricegroup") {
 		echo(parseSite('delete-pricegroup', array("pricegroups" => getPriceGroups())));
 	}
@@ -26,6 +28,7 @@ if(isUserLoggedIn()) {
 		echo(parseSite('delete-pricegroup', array("status" => deletePriceGroup(), "pricegroups" => getPriceGroups())));
 	}
 
+	// Create pricegroup
 	else if ($site == 'create-pricegroup') {
 		echo(parseSite('create-pricegroup', array()));
 	}
@@ -33,6 +36,7 @@ if(isUserLoggedIn()) {
 		echo(parseSite('create-pricegroup-submit', array("status" => createPriceGroup())));
 	}
 
+	// Create user
 	else if ($site == 'create-user') {
 		echo(parseSite('create-user', array()));
 	}
@@ -40,6 +44,7 @@ if(isUserLoggedIn()) {
 		echo(parseSite('create-user-submit', array("status" => createUser())));
 	}
 
+	// Create event
 	else if ($site == 'create-event') {
 		echo(parseSite('create-event', array("pricegroups" => getPriceGroups())));
 	}
@@ -47,6 +52,7 @@ if(isUserLoggedIn()) {
 		echo(parseSite('create-event-submit', array("status" => createEvent())));
 	}
 
+	// Login
 	else if ($site == 'login') {
 		echo(parseSite('login', array()));
 	}
@@ -54,14 +60,17 @@ if(isUserLoggedIn()) {
 		echo(parseSite('login-submit', array(login())));
 	}
 
+	// About-page
 	else if ($site == 'about') {
 		echo(parseSite('about', array()));
 	}
 
+	// Admin-Page
 	else if ($site == 'admin') {
 		echo(parseSite('admin', array()));
 	}
 
+	// Create genre
 	else if ($site == 'create-genre') {
 		echo(parseSite('create-genre', array()));
 	}
@@ -69,11 +78,20 @@ if(isUserLoggedIn()) {
 		echo(parseSite('create-genre-submit', array("status" => createGenre())));
 	}
 
+	// Delete genre
 	else if($site == "delete-genre") {
 		echo(parseSite('delete-genre', array("genres" => getGenres())));
 	}
 	else if ($site == "delete-genre-submit") {
 		echo(parseSite('delete-genre', array("status" => deleteGenre(), "genres" => getGenres())));
+	}
+
+	// Change password
+	else if($site == "change-password") {
+		echo(parseSite('change-password', array()));
+	}
+	else if ($site == "change-password-submit") {
+		echo(parseSite('change-password-submit', array("status" => changePw())));
 	}
 
 	else {
