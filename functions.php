@@ -336,4 +336,19 @@ function changePw() {
 	}
 }
 
+
+// Delete event
+function deleteEvent() {
+	$id = $_POST['selectid'];
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	if($connection->query("DELETE from veranstaltung where ID='$id'") === TRUE) {
+		return 'Preiskategorie wurde erfolgreich gelöscht!';
+	} else {
+		file_put_contents('used.txt', 'fail');
+		// Go to error page
+		header("Location: index.php?site=error");
+		die();
+	}
+}
+
 ?>

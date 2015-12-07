@@ -94,6 +94,14 @@ if(isUserLoggedIn()) {
 		echo(parseSite('change-password-submit', array("status" => changePw())));
 	}
 
+	// Delete genre
+	else if($site == "delete-event") {
+		echo(parseSite('delete-event', array("events" => getEvents())));
+	}
+	else if ($site == "delete-event-submit") {
+		echo(parseSite('delete-event', array("status" => deleteEvent(), "events" => getEvents())));
+	}
+
 	else {
 		echo(parseSite('error', array()));
 	} 
