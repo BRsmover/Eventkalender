@@ -3,7 +3,7 @@
 {% block content %}
 	<h1>Eventkalender</h1>
 	<div class="row">
-		{% for event in events %}
+		{% for event in oldEvents %}
 			<div class="col-sm-6 col-md-4">
 				<div class="thumbnail">
 					<img src="{{ event.bild }}" alt="Bild des Events">
@@ -16,7 +16,7 @@
 					{% endif %}
 					{# <p>Preisgruppen </p><!-- Preisgruppen anzeigen --> #}
 					<p>Dauer: {{ event.dauer }} Minuten</p>
-					{# <p>Genre: {{  }}</p><!-- Zugehöriges Genre anzeigen --> #}
+					{# <p>Genre: {{  }}</p><!-- ZugehÃ¶riges Genre anzeigen --> #}
 					<p><a href="{{ event.link }}">Link: {{ event.linkbeschreibung }}</a></p>
 					</div>
 				</div>

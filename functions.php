@@ -22,10 +22,23 @@ function getEvents() {
 	$data = array();
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 	$result = $connection->query("SELECT * from veranstaltung");
-    while($row = $result->fetch_assoc()) {
+	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
-    }
-    return $data;
+	}
+// 	file_put_contents('events.txt', var_dump($data));
+	return $data;
+}
+
+// Get last 5 passed events
+function fillArchive() {
+	$date = gmdate('Y-m-d h:i:s \G\M\T');
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	$result = $connection->query("SELECT * from veranstaltung WHERE termin < '$date' LIMIT 0,5");
+	while($row = $result->fetch_assoc()) {
+		$data[] = $row;
+	}
+// 	file_put_contents('archiv.txt', var_dump($data));
+	return $data;
 }
 
 // Get all pricegroups

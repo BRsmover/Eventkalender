@@ -20,6 +20,11 @@ if(isUserLoggedIn()) {
 		echo(parseSite('home', array("events" => getEvents())));
 	}
 
+	// Archive
+	if($site == "archive") {
+		echo(parseSite('archive', array("oldEvents" => fillArchive())));
+	}
+
 	// Delete pricegroup
 	else if($site == "delete-pricegroup") {
 		echo(parseSite('delete-pricegroup', array("pricegroups" => getPriceGroups())));
