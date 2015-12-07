@@ -17,7 +17,7 @@ $site = getSite();
 if(isUserLoggedIn()) {
 	// Home
 	if($site == "home") {
-		echo(parseSite('home', array(getEvents())));
+		echo(parseSite('home', array("events" => getEvents())));
 	}
 
 	// Delete pricegroup

@@ -2,22 +2,23 @@
 
 {% block content %}
 <h1>Eventkalender</h1>
-{% for veranstaltung in veranstaltungen %} <!-- Bezeichnungen für Spalten anpassen -->
+{% for event in events %}
 	<div class="row">
 		<div class="col-sm-6 col-md-4">
 			<div class="thumbnail">
-				<img src="veranstaltung.bild" alt="Bild des Events">
+				<img src="event.bild" alt="Bild des Events">
 			<div class="caption">
-				<p>{{ veranstaltung.bild-beschreibung }}</p>
-				<h3>{{ veranstaltung.name }}</h3>
-				<p><b>Beschreibung<b></p>
-				{% if veranstaltung.besetzung > 1 %}
+				<p>{{ event.bild-beschreibung }}</p>
+				<h3>{{ event.name }}</h3>
+				<p><b>{{ event.beschreibung }}<b></p>
+				{% if event.besetzung > 1 %}
 					<p><b>Besetzung</b></p>
-					<p>{{ veranstaltung.besetzung }}</p>
+					<p>{{ event.besetzung }}</p>
 				{% endif %}
-				<p>Preisgruppen </p> <!-- Preisgruppen anzeigen -->
-				<p>Dauer: {{ veranstaltung.dauer }}</p>
-				<p><a href="{{ veranstaltung.link }}">{{ veranstaltung.link-beschreibung }}</a></p>
+				<!--<p>Preisgruppen </p>--> <!-- Preisgruppen anzeigen -->
+				<p>Dauer: {{ event.dauer }}</p>
+				<!--<p>Genre: {{  }}</p>--> <!-- Zugehöriges Genre anzeigen -->
+				<p><a href="{{ event.link }}">{{ event.link-beschreibung }}</a></p>
 				</div>
 			</div>
 		</div>
