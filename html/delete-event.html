@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{%block content %}
+<h1>Veranstaltung löschen</h1>
+{% if status %}
+<p>{{ status }}</p>
+{% endif %}
+<form action="index.php?site=delete-event-submit" method="post">
+	<select class="form-control" name="selectid">
+		{% for event in events %}
+			<option value="{{ event.id }}">{{ event.name }} </option>
+		{% endfor %}
+	</select>
+	<br />
+	<button class="btn btn-default" type="submit">Löschen</button>
+</form>
+{% endblock content %}
