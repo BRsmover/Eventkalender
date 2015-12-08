@@ -1,7 +1,9 @@
 {% extends "index.html" %}
 
 {% block content %}
-	<h1>Eventkalender</h1>
+	<h1>Eventkalender <small>Die angesagtesten Events auf einen Blick!</small></h1>
+	<h3>Hier finden Sie den Event, den Sie suchen!</h3>
+	<p>Wussten Sie bereits, welche Events in letzter Zeit stattfanden? Im Archiv finden sie auch diese!</p>
 	<div class="row">
 		{% for event in events %}
 			<div class="col-sm-6 col-md-4">
