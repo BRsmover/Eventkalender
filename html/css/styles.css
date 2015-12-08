@@ -1,3 +1,8 @@
 .form-control {
     width: 25%;
 }
+
+.subtitle {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}

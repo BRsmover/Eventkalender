@@ -17,7 +17,7 @@ $site = getSite();
 if(isUserLoggedIn()) {
 	// Home
 	if($site == "home") {
-		echo(parseSite('home', array("events" => getEvents())));
+		echo(parseSite('home', array("pricegroups" => getAssociatedPriceGroups(), "events" => getEvents())));
 	}
 
 	// Archive

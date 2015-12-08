@@ -53,6 +53,35 @@ function getPriceGroups() {
 	return $data;
 }
 
+// Get the pricegroups of an event
+function getAssociatedPriceGroups() {
+	$data = array();
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	$events = getEvents();
+	var_dump($events);
+	foreach($events as $event) {
+		$eId = $event['id'];
+		echo $eId;
+		$result = $connection->query("SELECT fk_preisgruppe_id FROM veranstaltung_hat_preisgruppe WHERE fk_veranstaltung_id = '$eId'");
+		// Save all foreign keys from query in array
+		while($row = $result->fetch_assoc()) {
+			$data[] = $row;
+			echo 'hallo';
+			var_dump($data);
+		}
+		var_dump($data);
+		// Get for each foreign key the pricegroup
+		foreach($data as $dataEntry) {
+			$id = $dataEntry['fk_preisgruppe_id'];
+			$pricegroups = $connection->query("SELECT * FROM preisgruppe WHERE ID = '$id'");
+			while($row = $pricegroups->fetch_assoc()) {
+				$data[] = $row;
+			}
+			return $data;
+		}
+	}
+}
+
 // Delete pricegroup
 function deletePriceGroup() {
 	$id = $_POST['selectid'];

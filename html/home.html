@@ -10,20 +10,26 @@
 				<div class="caption">
 					<p>{{ event.bildbeschreibung }}</p>
 					<h3>{{ event.name }}</h3>
+					<p class="subtitle"><b>Beschreibung</b></p>
 					<p>{{ event.beschreibung }}</p>
+					<p class="subtitle"><b>Besetzung</b></p>
 					{% if event.besetzung|length > 1 %}
 						<p>{{ event.besetzung }}</p>
 					{% endif %}
-					<p>Datum: {{ event.termin }}</p>
-					{# <p>Preisgruppen </p>
-						{#<ul>#}
-							{#{% for pricegroup in pricegroups %}#}
-								{#<li name="{{ pricegroup.name }}">{{ pricegroup.name }} - {{ pricegroup.preis }}</li>#}
-							{#{% endfor %}#}
-						{#</ul>#}
-					<p>Dauer: {{ event.dauer }} Minuten</p>
-					{# <p>Genre: {{ }}</p><!-- Zugehöriges Genre anzeigen --> #}
-					<p>Link: <a href="{{ event.link }}">{{ event.linkbeschreibung }}</a></p>
+					<p class="subtitle"><b>Datum</b></p>
+					<p>{{ event.termin }}</p>
+					<p class="subtitle"><b>Preisgruppen</b></p>
+					<ul>
+						{% for pricegroup in pricegroups %}
+							<li name="{{ pricegroup.name }}">{{ pricegroup.name }} - {{ pricegroup.preis }}.- CHF</li>
+						{% endfor %}
+					</ul>
+					<p class="subtitle"><b>Dauer</b></p>
+					<p>{{ event.dauer }} Minuten</p>
+					<p class="subtitle"><b>Genre</b></p>
+					{# <p>{{ }}</p><!-- Zugehöriges Genre anzeigen --> #}
+					<p class="subtitle"><b>Link</b></p>
+					<p><a href="{{ event.link }}">{{ event.linkbeschreibung }}</a></p>
 					</div>
 				</div>
 			</div>
