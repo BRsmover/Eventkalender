@@ -21,7 +21,7 @@ if(isUserLoggedIn()) {
 	}
 
 	// Archive
-	if($site == "archive") {
+	else if($site == "archive") {
 		echo(parseSite('archive', array("oldEvents" => fillArchive())));
 	}
 
