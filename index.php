@@ -51,7 +51,7 @@ if(isUserLoggedIn()) {
 
 	// Create event
 	else if ($site == 'create-event') {
-		echo(parseSite('create-event', array("pricegroups" => getPriceGroups())));
+		echo(parseSite('create-event', array("pricegroups" => getPriceGroups(), "genres" => getGenres())));
 	}
 	else if ($site == 'create-event-submit') {
 		echo(parseSite('create-event-submit', array("status" => createEvent())));

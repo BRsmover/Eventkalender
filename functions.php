@@ -119,8 +119,10 @@ function getGenres() {
 function deleteGenre() {
 	$id = $_POST['selectid'];
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Check if genre is used
 	$result = $connection->query("SELECT name FROM veranstaltung WHERE fk_genre_id = '$id'");
 	$usage = $result->num_rows;
+	// If not used - delete it
 	if($usage == 0) {
 		if($connection->query("DELETE from genre where id='" . $id . "';") === TRUE) {
 			return 'Genre wurde erfolgreich gelöscht!';
@@ -173,7 +175,7 @@ function createUser() {
 // Create event
 function createEvent() {
 	// Check if necessary fields are set
-	if(isset($_POST['name']) && isset($_POST['beschreibung']) && isset($_POST['termin']) && isset($_POST['dauer']) && isset($_FILES) && isset($_POST['bildbeschreibung']) && isset($_POST['link']) && isset($_POST['linkbeschreibung']) && isset($_POST['genre_id'])) {
+	if(isset($_POST['name']) && isset($_POST['beschreibung']) && isset($_POST['termin']) && isset($_POST['dauer']) && isset($_FILES) && isset($_POST['bildbeschreibung']) && isset($_POST['link']) && isset($_POST['linkbeschreibung']) && isset($_POST['selectid'])) {
 		$name = $_POST['name'];
 
 		// Check if 'besetzung' is set, if not make it an empty string
@@ -186,8 +188,7 @@ function createEvent() {
 		$beschreibung = $_POST['beschreibung'];
 		$termin = $_POST['termin'];
 		$dauer = $_POST['dauer'];
-
-		// Check if filetype is an image
+		
 		$allowed = array('image/jpeg', 'image/png', 'image/jpg');
 		$filetype = $_FILES['bild']['type'];
 		if (in_array($filetype, $allowed)) {
@@ -197,10 +198,52 @@ function createEvent() {
 			// Move file to files/
 			$moveFile = move_uploaded_file($_FILES['bild']['tmp_name'], $uploadfile);
 			if ($moveFile) {
-// 				echo 'Datei ist valide und wurde erfolgreich hochgeladen.';
+				$bildbeschreibung = $_POST['bildbeschreibung'];
+				$link = $_POST['link'];
+				$linkbeschreibung = $_POST['linkbeschreibung'];
+				$genre_id = $_POST['selectid'];
+// 				file_put_contents('genre.txt', $genre_id);
+
+				// SQL-Query to insert event
+				$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+				if($connection->query("INSERT INTO veranstaltung (name, besetzung, beschreibung, termin, dauer, bild, bildbeschreibung, link, linkbeschreibung, fk_genre_id) VALUES ('$name', '$besetzung', '$beschreibung', '$termin', $dauer, '$uploadfile', '$bildbeschreibung', '$link', '$linkbeschreibung', $genre_id)")) {
+
+					// SQL-Query to get last id
+					$resultId = $connection->query("SELECT id FROM veranstaltung WHERE id=(SELECT max(id) FROM veranstaltung)");
+// 					file_put_contents('id.txt', getId($resultId));
+
+					// SQL-Query to insert entries in "veranstaltung_hat_preisgruppe"
+// 					$pricegroups = getPriceGroups();
+					// Get array of checkboxes with ID's from pricegroups
+					$pricegroups = $_POST['pricegroup'];
+// 					var_dump($pricegroups);
+					$veranstaltungId = getId($resultId);
+					foreach($pricegroups as $pricegroup) {
+						if(isset($pricegroup)) {
+							$insert = $connection->query("INSERT INTO veranstaltung_hat_preisgruppe (fk_preisgruppe_id, fk_veranstaltung_id) VALUES ('$pricegroup', '$veranstaltungId')");
+							if($insert == false) {
+								file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltungId . " pricegroupId: " . $pricegroup);
+								// Go to error page
+								header("Location: index.php?site=error");
+								die();
+							}
+						} else {
+							// Go to error page
+							header("Location: index.php?site=error");
+							die();
+						}
+					}
+
+					return 'Veranstaltung wurde erfolgreich erstellt!';
+				} else {
+					file_put_contents('event-creation-fail.txt', "Event wasn't created...");
+					// Go to error page
+					header("Location: index.php?site=error");
+					die();
+				}
 			} else {
 				// Go to error page
-				file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile);
+				file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile . "\ntmp: " . $_FILES['bild']['tmp_name']);
 				header("Location: index.php?site=error");
 				die();
 			}
@@ -210,45 +253,14 @@ function createEvent() {
 			header("Location: index.php?site=error");
 			die();
 		}
-
-		$bildbeschreibung = $_POST['bildbeschreibung'];
-		$link = $_POST['link'];
-		$linkbeschreibung = $_POST['linkbeschreibung'];
-		$genre_id = $_POST['genre_id'];
-
-		// SQL-Query to insert event
-		$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
-		if($connection->query("INSERT INTO veranstaltung (name, besetzung, beschreibung, termin, dauer, bild, bildbeschreibung, link, linkbeschreibung, fk_genre_id) VALUES ('$name', '$besetzung', '$beschreibung', '$termin', $dauer, '$uploadfile', '$bildbeschreibung', '$link', '$linkbeschreibung', $genre_id)")) {
-
-			// SQL-Query to get last id
-			$resultId = $connection->query("SELECT id FROM veranstaltung WHERE id=(SELECT max(id) FROM veranstaltung)");
- 			file_put_contents('id.txt', getId($resultId));
-
-			// SQL-Query to insert entries in "veranstaltung_hat_preisgruppe"
-			$pricegroups = getPriceGroups();
-			$veranstaltungId = getId($resultId);
-//  			var_dump($pricegroups);
-			foreach($pricegroups as $pricegroup) {
-				if(isset($_POST[$pricegroup['ID']])) {
-					$pricegroupId = $pricegroup['ID'];
-					$insert = $connection->query("INSERT INTO veranstaltung_hat_preisgruppe (fk_preisgruppe_id, fk_veranstaltung_id) VALUES ('$pricegroupId', '$veranstaltungId')");
-					if($insert == false) {
-						file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltungId . " pricegroupId: " . $pricegroupId);
-						// Go to error page
-						header("Location: index.php?site=error");
-						die();
-					}
-				}
-			}
-
-			return 'Veranstaltung wurde erfolgreich erstellt!';
-		} else {
-			file_put_contents('event-creation-fail.txt', "Event wasn't created...");
-			// Go to error page
-			header("Location: index.php?site=error");
-			die();
-		}
 	}
+}
+
+// Upload image
+function uploadImage($bild) {
+// 	file_put_contents('fileupload.txt', 'file upload');
+	// Check if filetype is an image
+	
 }
 
 // Check if user is logged in
