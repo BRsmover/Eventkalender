@@ -299,20 +299,13 @@ function createEvent() {
 	}
 }
 
-// Upload image
-function uploadImage($bild) {
-// 	file_put_contents('fileupload.txt', 'file upload');
-	// Check if filetype is an image
-	
-}
-
 // Check if user is logged in
 function isUserLoggedIn() {
-// if ($_SESSION['loggedin'] == true) {
-		return false;
-//  	} else {
-//  	return false;
-//  	}
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+		return true;
+ 	} else {
+ 	return false;
+ 	}
 }
 
 function hasUserLoginCredentials() {
