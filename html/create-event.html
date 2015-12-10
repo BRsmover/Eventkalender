@@ -42,13 +42,14 @@
 		<label for="linkbeschreibung">Linkbeschreibung</label>
 		<input class="form-control" type="text" id="linkbeschreibung" name="linkbeschreibung" placeholder="Info zum Link" required >
 	</div>
+	<label for="selectid">Genre</label>
 	<select class="form-control" name="selectid">
 		{% for genre in genres %}
 			<option value="{{ genre.id }}">{{ genre.name }} </option>
 		{% endfor %}
 	</select>
-
-	<p><b>Preisgruppen</b></p>
+	<br />
+	<label for="pricegroup[]">Preisgruppen</label><br />
 	{% for pricegroup in pricegroups %}
 		<label for="{{ pricegroup.name }}"> <input type="checkbox" name="pricegroup[]" value="{{ pricegroup.ID }}" id="{{ pricegroup.name }}"> {{ pricegroup.name }} </label>
 	{% endfor %}

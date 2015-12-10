@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h1>Veranstaltung bearbeiten</h1>
+{% if status %}
+<p>{{ status }}</p>
+{% endif %}
+{#{{ dump(event) }}#}
+{#{{ dump(genres) }}#}
+<form enctype="multipart/form-data" action="index.php?site=edit-event-submit" method="post">
+	<div class="form-group">
+		<label for="name">Name</label>
+		<input class="form-control" type="text" id="name" name="name" placeholder="{{ event[0].name }}" maxlength="100" required >
+	</div>
+	<div class="form-group">
+		<label for="besetzung">Besetzung</label>
+		<input class="form-control" type="text" id="besetzung" name="besetzung" placeholder="{{ event[0].besetzung }}" maxlength="255" >
+	</div>
+	<div class="form-group">
+		<label for="beschreibung">Beschreibung</label>
+		<input class="form-control" type="text" id="beschreibung" name="beschreibung" placeholder="{{ event[0].beschreibung }}" required >
+	</div>
+	<div class="form-group">
+		<label for="termin">Termin</label>
+		<input class="form-control" type="datetime" id="termin" name="termin" placeholder="{{ event[0].termin }}" required >
+	</div>
+	<div class="form-group">
+		<label for="dauer">Dauer (in Minuten)</label>
+		<input class="form-control" type="number" id="dauer" name="dauer" maxlength="5" placeholder="{{ event[0].dauer }}" required >
+	</div>
+	<div class="form-group">
+		<label for="bild">Bild</label>
+		<input class="form-control" type="file" id="bild" name="bild" placeholder="Wählen Sie ein Bild aus..." required >
+	</div>
+	<div class="form-group">
+		<label for="bildbeschreibung">Bildbeschreibung</label>
+		<input class="form-control" type="text" id="bildbeschreibung" name="bildbeschreibung" maxlength="255" placeholder="{{ event[0].bildbeschreibung }}" required>
+	</div>
+	<div class="form-group">
+		<label for="link">Link</label>
+		<input class="form-control" type="text" id="link" name="link" placeholder="{{ event[0].link }}" maxlength="100" required >
+	</div>
+	<div class="form-group">
+		<label for="linkbeschreibung">Linkbeschreibung</label>
+		<input class="form-control" type="text" id="linkbeschreibung" name="linkbeschreibung" placeholder="{{ event[0].linkbeschreibung }}" required >
+	</div>
+	<label for="selectid">Genre</label>
+	<select class="form-control" name="selectid">
+		{% for genre in genres %}
+			{% if event[0].fk_genre_id==genre.id %}
+				<option value="{{ genre.id }}" selected="selected">{{ genre.name }} </option>
+			{% else %}
+				<option value="{{ genre.id }}">{{ genre.name }} </option>
+			{% endif %}
+		{% endfor %}
+	</select>
+	<br />
+	<label for="pricegroup[]">Preisgruppen</label><br />
+	{% for pricegroup in pricegroups %}
+		<label for="{{ pricegroup.name }}"> <input type="checkbox" name="pricegroup[]" value="{{ pricegroup.ID }}" id="{{ pricegroup.name }}"> {{ pricegroup.name }} </label>
+	{% endfor %}
+
+	<br />
+	<button type="submit" class="btn btn-default">Submit</button>
+</form>
+{% endblock content%}

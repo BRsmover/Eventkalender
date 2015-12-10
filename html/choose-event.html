@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{%block content %}
+<h1>Zu bearbeitende Veranstaltung auswählen</h1>
+{% if status %}
+<p>{{ status }}</p>
+{% endif %}
+<form action="index.php?site=edit-event" method="post">
+	<select class="form-control" name="selectid">
+		{% for event in events %}
+			<option value="{{ event.id }}">{{ event.name }} </option>
+		{% endfor %}
+	</select>
+	<br />
+	<button class="btn btn-default" type="submit">OK</button>
+</form>
+{% endblock content %}

@@ -9,15 +9,12 @@ function getSite() {
 	return $site;
 }
 
-function checkLogin()
-{
-	if(!isUserLoggedIn())
-	{
+function checkLogin() {
+	if(!isUserLoggedIn()) {
 		echo(parseSite("error", array("error" =>  "Sie sind nicht angemeldet")));
 		return false;
 	}
-	else
-	{
+	else {
 		return true;
 	}
 }
@@ -417,5 +414,102 @@ function logout() {
 	session_destroy();
 	header("Location: index.php?site=login");
 	die();
+}
+
+// Get event that is to be edited
+function getEditEvent() {
+	$id = $_POST['selectid'];
+	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	$result = $connection->query("SELECT * from veranstaltung where ID='$id'");
+	if($result) {
+		$_SESSION['veranstaltung_id'] = $id;
+		while($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	} else {
+// 		file_put_contents('no-event-chosen.txt', 'fail');
+		// Go to error page
+		header("Location: index.php?site=error");
+		die();
+	}
+}
+
+function editEvent() {
+// var_dump($event);
+$veranstaltung_id = $_SESSION['veranstaltung_id'];
+// Get fields and UPDATE into database
+// Check if necessary fields are set
+if(isset($_POST['name']) && isset($_POST['beschreibung']) && isset($_POST['termin']) && isset($_POST['dauer']) && isset($_FILES) && isset($_POST['bildbeschreibung']) && isset($_POST['link']) && isset($_POST['linkbeschreibung']) && isset($_POST['selectid'])) {
+	$name = $_POST['name'];
+
+	// Check if 'besetzung' is set, if not make it an empty string
+	if(isset($_POST['besetzung'])) {
+		$besetzung = $_POST['besetzung'];
+	} else {
+		$besetzung = '';
+	}
+
+	$beschreibung = $_POST['beschreibung'];
+	$termin = $_POST['termin'];
+	$dauer = $_POST['dauer'];
+	
+	$allowed = array('image/jpeg', 'image/png', 'image/jpg');
+	$filetype = $_FILES['bild']['type'];
+	if (in_array($filetype, $allowed)) {
+		// Getting path of file
+		$uploaddir = 'files/';
+		$uploadfile = $uploaddir . basename($_FILES['bild']['name']);
+		// Move file to files/
+		$moveFile = move_uploaded_file($_FILES['bild']['tmp_name'], $uploadfile);
+		if ($moveFile) {
+			$bildbeschreibung = $_POST['bildbeschreibung'];
+			$link = $_POST['link'];
+			$linkbeschreibung = $_POST['linkbeschreibung'];
+			$genre_id = $_POST['selectid'];
+
+			// SQL-Query to update event
+			$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+			if($connection->query("UPDATE veranstaltung SET name='$name', besetzung='$besetzung', beschreibung='$beschreibung', termin='$termin', dauer='$dauer', bild='$uploadfile', bildbeschreibung='$bildbeschreibung', link='$link', linkbeschreibung='$linkbeschreibung', fk_genre_id='$genre_id' WHERE id='$veranstaltung_id'")) {
+
+				// SQL-Query to update entries in "veranstaltung_hat_preisgruppe"
+				// Get array of checkboxes with ID's from pricegroups
+				$pricegroups = $_POST['pricegroup'];
+				foreach($pricegroups as $pricegroup) {
+					if(isset($pricegroup)) {
+						$update = $connection->query("UPDATE veranstaltung_hat_preisgruppe SET fk_preisgruppe_id='$pricegroup', fk_veranstaltung_id='$veranstaltung_id' WHERE fk_veranstaltung_id='$veranstaltung_id'");
+						if($update == false) {
+							file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltung_id . " pricegroupId: " . $pricegroup . " session-variable: " . $_SESSION['veranstaltung_id']);
+							// Go to error page
+							header("Location: index.php?site=error");
+							die();
+						}
+					} else {
+						// Go to error page
+						header("Location: index.php?site=error");
+						die();
+					}
+				}
+
+				return 'Veranstaltung wurde erfolgreich angepasst!';
+			} else {
+				file_put_contents('event-creation-fail.txt', "Event wasn't created...");
+				// Go to error page
+				header("Location: index.php?site=error");
+				die();
+			}
+		} else {
+			// Go to error page
+			file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile . "\ntmp: " . $_FILES['bild']['tmp_name']);
+			header("Location: index.php?site=error");
+			die();
+		}
+	} else {
+		// Go to error page
+		file_put_contents('image-not-valid.txt', "Image ain't valid!");
+		header("Location: index.php?site=error");
+		die();
+	}
+}
 }
 ?>

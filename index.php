@@ -28,7 +28,7 @@ else if ($site == 'about') {
 	echo(parseSite('about', array()));
 }
 
-	// Login
+// Login
 else if ($site == 'login') {
 	echo(parseSite('login', array()));
 }
@@ -127,7 +127,7 @@ else if ($site == "change-password-submit") {
 	}
 }
 
-// Delete genre
+// Delete event
 else if($site == "delete-event") {
 	if(checkLogin()) {
 		echo(parseSite('delete-event', array("events" => getEvents())));
@@ -143,6 +143,23 @@ else if ($site == "delete-event-submit") {
 else if ($site == 'logout') {
 	if(checkLogin()) {
 		echo(parseSite('logout', array(logout())));
+	}
+}
+
+// Edit event
+else if($site == "choose-event") {
+	if(checkLogin()) {
+		echo(parseSite('choose-event', array("events" => getEvents())));
+	}
+}
+	else if($site == "edit-event") {
+	if(checkLogin()) {
+		echo(parseSite('edit-event', array("pricegroups" => getPriceGroups(), "genres" => getGenres(), "event" => getEditEvent())));
+	}
+}
+else if ($site == "edit-event-submit") {
+	if(checkLogin()) {
+		echo(parseSite('edit-event', array("status" => editEvent())));
 	}
 }
 
