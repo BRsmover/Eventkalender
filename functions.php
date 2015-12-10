@@ -9,10 +9,23 @@ function getSite() {
 	return $site;
 }
 
+function checkLogin()
+{
+	if(!isUserLoggedIn())
+	{
+		echo(parseSite("error", array("error" =>  "Sie sind nicht angemeldet")));
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
 // Parse site
 function parseSite($site, $data) {
 	$loader = new Twig_Loader_Filesystem('html');
-	$twig = new Twig_Environment($loader);
+	$twig = new Twig_Environment($loader, array('debug' => true));
+	$twig->addExtension(new Twig_Extension_Debug());
 	$template = $twig->loadTemplate($site . ".html");
 	return $template->render($data);
 }
@@ -53,33 +66,34 @@ function getPriceGroups() {
 	return $data;
 }
 
-// Get the pricegroups of an event
-function getAssociatedPriceGroups() {
+// Get all events including their data
+function getCompleteEvents() {
 	$data = array();
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 	$events = getEvents();
-	var_dump($events);
 	foreach($events as $event) {
+		$pricegroups = array();
 		$eId = $event['id'];
-		echo $eId;
+		$genreid = $event['fk_genre_id'];
 		$result = $connection->query("SELECT fk_preisgruppe_id FROM veranstaltung_hat_preisgruppe WHERE fk_veranstaltung_id = '$eId'");
 		// Save all foreign keys from query in array
 		while($row = $result->fetch_assoc()) {
-			$data[] = $row;
-			echo 'hallo';
-			var_dump($data);
+			$pricegroups[] = $row;
 		}
-		var_dump($data);
 		// Get for each foreign key the pricegroup
-		foreach($data as $dataEntry) {
-			$id = $dataEntry['fk_preisgruppe_id'];
-			$pricegroups = $connection->query("SELECT * FROM preisgruppe WHERE ID = '$id'");
-			while($row = $pricegroups->fetch_assoc()) {
-				$data[] = $row;
+		$finalpricegroups = array();
+		foreach($pricegroups as $pricegroup) {
+			$id = $pricegroup['fk_preisgruppe_id'];
+			$pricegrouplines = $connection->query("SELECT * FROM preisgruppe WHERE ID = '$id'");
+			while($row = $pricegrouplines->fetch_assoc()) {
+				$finalpricegroups[] = $row;
 			}
-			return $data;
 		}
+		$genreresult = $connection->query("SELECT * FROM genre WHERE id = '$genreid'");
+		$genre = $genreresult->fetch_assoc();
+		$data[] = array("event" => $event, "pricegroups" => $finalpricegroups, "genre" => $genre);
 	}
+	return $data;
 }
 
 // Delete pricegroup
@@ -295,7 +309,7 @@ function uploadImage($bild) {
 // Check if user is logged in
 function isUserLoggedIn() {
 // if ($_SESSION['loggedin'] == true) {
-		return true;
+		return false;
 //  	} else {
 //  	return false;
 //  	}

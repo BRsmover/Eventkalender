@@ -8,30 +8,34 @@
 		{% for event in events %}
 			<div class="col-sm-6 col-md-4">
 				<div class="thumbnail">
-					<img src="{{ event.bild }}" alt="Bild des Events">
+					<img src="{{ event.event.bild }}" alt="Bild des Events">
 				<div class="caption">
-					<p>{{ event.bildbeschreibung }}</p>
-					<h3>{{ event.name }}</h3>
+					<p>{{ event.event.bildbeschreibung }}</p>
+					<h3>{{ event.event.name }}</h3>
 					<p class="subtitle"><b>Beschreibung</b></p>
-					<p>{{ event.beschreibung }}</p>
+					<p>{{ event.event.beschreibung }}</p>
 					<p class="subtitle"><b>Besetzung</b></p>
-					{% if event.besetzung|length > 1 %}
-						<p>{{ event.besetzung }}</p>
+					{% if event.event.besetzung|length > 1 %}
+						<p>{{ event.event.besetzung }}</p>
 					{% endif %}
 					<p class="subtitle"><b>Datum</b></p>
-					<p>{{ event.termin }}</p>
+					<p>{{ event.event.termin }}</p>
 					<p class="subtitle"><b>Preisgruppen</b></p>
+					{% if event.pricegroups is not empty %}
 					<ul>
-						{% for pricegroup in pricegroups %}
+						{% for pricegroup in event.pricegroups %}
 							<li name="{{ pricegroup.name }}">{{ pricegroup.name }} - {{ pricegroup.preis }}.- CHF</li>
 						{% endfor %}
 					</ul>
+					{% else %}
+					<p>Keine Preisgruppen vorhanden</p>
+					{% endif %}
 					<p class="subtitle"><b>Dauer</b></p>
-					<p>{{ event.dauer }} Minuten</p>
+					<p>{{ event.event.dauer }} Minuten</p>
 					<p class="subtitle"><b>Genre</b></p>
-					{# <p>{{ }}</p><!-- Zugehöriges Genre anzeigen --> #}
+					<p>{{ event.genre.name }}</p>
 					<p class="subtitle"><b>Link</b></p>
-					<p><a href="{{ event.link }}">{{ event.linkbeschreibung }}</a></p>
+					<p><a href="{{ event.event.link }}">{{ event.event.linkbeschreibung }}</a></p>
 					</div>
 				</div>
 			</div>

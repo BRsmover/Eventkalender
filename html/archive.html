@@ -10,15 +10,16 @@
 				<div class="caption">
 					<p>{{ event.bildbeschreibung }}</p>
 					<h3>{{ event.name }}</h3>
+					<p class="subtitle"><b>Beschreibung</b></p>
 					<p>{{ event.beschreibung }}</p>
+					<p class="subtitle"><b>Besetzung</b></p>
 					{% if event.besetzung|length > 1 %}
 						<p>{{ event.besetzung }}</p>
 					{% endif %}
-					<p>Datum: {{ event.termin }}</p>
-					{# <p>Preisgruppen </p><!-- Preisgruppen anzeigen --> #}
-					<p>Dauer: {{ event.dauer }} Minuten</p>
-					{# <p>Genre: {{  }}</p><!-- Zugehöriges Genre anzeigen --> #}
-					<p><a href="{{ event.link }}">Link: {{ event.linkbeschreibung }}</a></p>
+					<p class="subtitle"><b>Datum</b></p>
+					<p>{{ event.termin }}</p>
+					<p class="subtitle"><b>Link</b></p>
+					<p><a href="{{ event.link }}">{{ event.linkbeschreibung }}</a></p>
 					</div>
 				</div>
 			</div>
