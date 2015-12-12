@@ -36,6 +36,8 @@ else if ($site == 'login-submit') {
 	echo(parseSite('login-submit', array(login())));
 }
 
+// The following sites require that the user is logged in
+
 // Delete pricegroup
 else if($site == "delete-pricegroup") {
 	if(checkLogin()) {
@@ -56,7 +58,7 @@ else if ($site == 'create-pricegroup') {
 }
 else if ($site == 'create-pricegroup-submit') {
 	if(checkLogin()) {
-		echo(parseSite('create-pricegroup-submit', array("status" => createPriceGroup())));
+		echo(parseSite('create-pricegroup', array("status" => createPriceGroup())));
 	}
 }
 
@@ -68,19 +70,7 @@ else if ($site == 'create-user') {
 }
 else if ($site == 'create-user-submit') {
 	if(checkLogin()) {
-		echo(parseSite('create-user-submit', array("status" => createUser())));
-	}
-}
-
-// Create event
-else if ($site == 'create-event') {
-	if(checkLogin()) {
-		echo(parseSite('create-event', array("pricegroups" => getPriceGroups(), "genres" => getGenres())));
-	}
-}
-else if ($site == 'create-event-submit') {
-	if(checkLogin()) {
-		echo(parseSite('create-event-submit', array("status" => createEvent())));
+		echo(parseSite('create-user', array("status" => createUser())));
 	}
 }
 
@@ -99,7 +89,7 @@ else if ($site == 'create-genre') {
 }
 else if ($site == 'create-genre-submit') {
 	if(checkLogin()) {
-		echo(parseSite('create-genre-submit', array("status" => createGenre())));
+		echo(parseSite('create-genre', array("status" => createGenre())));
 	}
 }
 
@@ -115,15 +105,15 @@ else if ($site == "delete-genre-submit") {
 	}
 }
 
-// Change password
-else if($site == "change-password") {
+// Create event
+else if ($site == 'create-event') {
 	if(checkLogin()) {
-		echo(parseSite('change-password', array()));
+		echo(parseSite('create-event', array("pricegroups" => getPriceGroups(), "genres" => getGenres())));
 	}
 }
-else if ($site == "change-password-submit") {
+else if ($site == 'create-event-submit') {
 	if(checkLogin()) {
-		echo(parseSite('change-password-submit', array("status" => changePw())));
+		echo(parseSite('create-event', array("status" => createEvent())));
 	}
 }
 
@@ -136,13 +126,6 @@ else if($site == "delete-event") {
 else if ($site == "delete-event-submit") {
 	if(checkLogin()) {
 		echo(parseSite('delete-event', array("status" => deleteEvent(), "events" => getEvents())));
-	}
-}
-
-// Logout
-else if ($site == 'logout') {
-	if(checkLogin()) {
-		echo(parseSite('logout', array(logout())));
 	}
 }
 
@@ -160,6 +143,25 @@ else if($site == "choose-event") {
 else if ($site == "edit-event-submit") {
 	if(checkLogin()) {
 		echo(parseSite('edit-event', array("status" => editEvent())));
+	}
+}
+
+// Logout
+else if ($site == 'logout') {
+	if(checkLogin()) {
+		echo(parseSite('logout', array(logout())));
+	}
+}
+
+// Change password
+else if($site == "change-password") {
+	if(checkLogin()) {
+		echo(parseSite('change-password', array()));
+	}
+}
+else if ($site == "change-password-submit") {
+	if(checkLogin()) {
+		echo(parseSite('change-password', array("status" => changePw())));
 	}
 }
 

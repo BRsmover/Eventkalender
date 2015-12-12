@@ -6,6 +6,8 @@
 	<p>Wussten Sie bereits, welche Events in letzter Zeit stattfanden? Im Archiv finden sie auch diese!</p>
 	<div class="row">
 		{% for event in events %}
+			<!-- Fix problem with different heights on thumbnails -->
+			<div class="clearfix visible-xs-block"></div>
 			<div class="col-sm-6 col-md-4">
 				<div class="thumbnail">
 					<img src="{{ event.event.bild }}" alt="Bild des Events">
@@ -35,7 +37,7 @@
 					<p class="subtitle"><b>Genre</b></p>
 					<p>{{ event.genre.name }}</p>
 					<p class="subtitle"><b>Link</b></p>
-					<p><a href="{{ event.event.link }}">{{ event.event.linkbeschreibung }}</a></p>
+					<p><a target="_blank" href="{{ event.event.link }}">{{ event.event.linkbeschreibung }}</a></p>
 					</div>
 				</div>
 			</div>

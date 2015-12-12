@@ -9,6 +9,7 @@ function getSite() {
 	return $site;
 }
 
+// Check if user is logged in
 function checkLogin() {
 	if(!isUserLoggedIn()) {
 		echo(parseSite("error", array("error" =>  "Sie sind nicht angemeldet")));
@@ -30,8 +31,11 @@ function parseSite($site, $data) {
 // Get all Events
 function getEvents() {
 	$data = array();
+	// Get current time
 	$date = gmdate('Y-m-d h:i:s \G\M\T');
+	// Open db connection
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Select entries from db which are in the future
 	$result = $connection->query("SELECT * from veranstaltung WHERE termin > '$date'");
 	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
@@ -42,8 +46,10 @@ function getEvents() {
 
 // Get last 5 passed events
 function fillArchive() {
+	// Get the current time
 	$date = gmdate('Y-m-d h:i:s \G\M\T');
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Get the five last events from db
 	$result = $connection->query("SELECT * from veranstaltung WHERE termin < '$date' LIMIT 0,5");
 	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
@@ -56,6 +62,7 @@ function fillArchive() {
 function getPriceGroups() {
 	$data = array();
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Select pricegroups
 	$result = $connection->query("SELECT * from preisgruppe");
 	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
@@ -67,11 +74,16 @@ function getPriceGroups() {
 function getCompleteEvents() {
 	$data = array();
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Get events in the future
 	$events = getEvents();
+	// For each one of these events
 	foreach($events as $event) {
 		$pricegroups = array();
-		$eId = $event['id'];
+		// Get its id
+		$eId = $event['id'];$
+		// Get its genre id
 		$genreid = $event['fk_genre_id'];
+		// Select the pricgroups of it in veranstaltung_hat_preisgruppe table
 		$result = $connection->query("SELECT fk_preisgruppe_id FROM veranstaltung_hat_preisgruppe WHERE fk_veranstaltung_id = '$eId'");
 		// Save all foreign keys from query in array
 		while($row = $result->fetch_assoc()) {
@@ -86,8 +98,10 @@ function getCompleteEvents() {
 				$finalpricegroups[] = $row;
 			}
 		}
+		// Get the genre from the id
 		$genreresult = $connection->query("SELECT * FROM genre WHERE id = '$genreid'");
 		$genre = $genreresult->fetch_assoc();
+		// Save everything into one big array
 		$data[] = array("event" => $event, "pricegroups" => $finalpricegroups, "genre" => $genre);
 	}
 	return $data;
@@ -97,9 +111,11 @@ function getCompleteEvents() {
 function deletePriceGroup() {
 	$id = $_POST['selectid'];
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Check if the pricegroup is used in veranstaltung_hat_preisgruppe
 	$result = $connection->query("SELECT fk_preisgruppe_id FROM veranstaltung_hat_preisgruppe WHERE fk_preisgruppe_id = '$id'");
 	$usage = $result->num_rows;
 	file_put_contents('usage.txt', $usage);
+	// If it isn't used delete it
 	if($usage == 0) {
 		if($connection->query("DELETE from preisgruppe where ID='$id'") === TRUE) {
 			return 'Preiskategorie wurde erfolgreich gelöscht!';
@@ -122,6 +138,7 @@ function createPriceGroup() {
 	$name = $_POST['name'];
 	$price = $_POST['price'];
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Insert the pricegroup
 	if($connection->query("INSERT INTO preisgruppe (name, preis) VALUES ('$name', '$price')")) {
 		return 'Preisgruppe wurde erfolgreich hinzugefügt!';
 	} else {
@@ -135,6 +152,7 @@ function createPriceGroup() {
 function createGenre() {
 	$name = $_POST['name'];
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Insert the genre
 	if($connection->query("INSERT INTO genre (name) VALUES ('$name')")) {
 		return 'Genre wurde erfolgreich hinzugefügt!';
 	} else {
@@ -148,6 +166,7 @@ function createGenre() {
 function getGenres() {
 	$data = array();
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+	// Get all genres
 	$result = $connection->query("SELECT * from genre");
 	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
@@ -162,7 +181,7 @@ function deleteGenre() {
 	// Check if genre is used
 	$result = $connection->query("SELECT name FROM veranstaltung WHERE fk_genre_id = '$id'");
 	$usage = $result->num_rows;
-	// If not used - delete it
+	// If not used delete it
 	if($usage == 0) {
 		if($connection->query("DELETE from genre where id='" . $id . "';") === TRUE) {
 			return 'Genre wurde erfolgreich gelöscht!';
@@ -185,14 +204,18 @@ function createUser() {
 		$password = $_POST['password'];
 // 		file_put_contents('login.txt', 'user: ' . $username . ' password: ' . $password);
 
+		// Check if it has at least one uppercase letter, one lowercase letter and a number
 		$uppercase = preg_match('@[A-Z]@', $password);
 		$lowercase = preg_match('@[a-z]@', $password);
 		$number    = preg_match('@[0-9]@', $password);
 
+		// If it has this and it's longer than 8
 		if($uppercase && $lowercase && $number && strlen($password) > 8) {
+			// Create password hash
 			$newpw = password_hash($password, PASSWORD_DEFAULT);
 			$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 
+			// Insert the user into db
 			if($connection->query("INSERT INTO benutzer (benutzername, passwort) VALUES ('$username', '$newpw')")) {
 				return 'Benutzer wurde erfolgreich erstellt!';
 			} else {
@@ -228,7 +251,8 @@ function createEvent() {
 		$beschreibung = $_POST['beschreibung'];
 		$termin = $_POST['termin'];
 		$dauer = $_POST['dauer'];
-		
+
+		// Define which filetypes are allowed
 		$allowed = array('image/jpeg', 'image/png', 'image/jpg');
 		$filetype = $_FILES['bild']['type'];
 		if (in_array($filetype, $allowed)) {

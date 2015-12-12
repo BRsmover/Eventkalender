@@ -6,3 +6,9 @@
 	margin-bottom: 0px;
 	padding-bottom: 0px;
 }
+
+.thumbnail{
+    width: 360px;
+    height: 720px;
+    overflow: auto;
+}
