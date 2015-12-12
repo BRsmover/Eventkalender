@@ -80,7 +80,7 @@ function getCompleteEvents() {
 	foreach($events as $event) {
 		$pricegroups = array();
 		// Get its id
-		$eId = $event['id'];$
+		$eId = $event['id'];
 		// Get its genre id
 		$genreid = $event['fk_genre_id'];
 		// Select the pricgroups of it in veranstaltung_hat_preisgruppe table
