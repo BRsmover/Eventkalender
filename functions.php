@@ -12,7 +12,7 @@ function getSite() {
 // Check if user is logged in
 function checkLogin() {
 	if(!isUserLoggedIn()) {
-		echo(parseSite("error", array("error" =>  "Sie sind nicht angemeldet")));
+		echo(parseSite("login", array()));
 		return false;
 	}
 	else {
