@@ -36,7 +36,7 @@ function getEvents() {
 	// Open db connection
 	$connection = new mysqli(MYSQL_HOSTNAME, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 	// Select entries from db which are in the future
-	$result = $connection->query("SELECT * from veranstaltung WHERE termin > '$date'");
+	$result = $connection->query("SELECT * from veranstaltung WHERE termin > '$date' ORDER BY termin ASC");
 	while($row = $result->fetch_assoc()) {
 		$data[] = $row;
 	}
@@ -114,19 +114,19 @@ function deletePriceGroup() {
 	// Check if the pricegroup is used in veranstaltung_hat_preisgruppe
 	$result = $connection->query("SELECT fk_preisgruppe_id FROM veranstaltung_hat_preisgruppe WHERE fk_preisgruppe_id = '$id'");
 	$usage = $result->num_rows;
-	file_put_contents('usage.txt', $usage);
+// 	file_put_contents('usage.txt', $usage);
 	// If it isn't used delete it
 	if($usage == 0) {
 		if($connection->query("DELETE from preisgruppe where ID='$id'") === TRUE) {
 			return 'Preiskategorie wurde erfolgreich gelöscht!';
 		} else {
-			file_put_contents('query.txt', 'fail');
+// 			file_put_contents('query.txt', 'fail');
 			// Go to error page
 			header("Location: index.php?site=error");
 			die();
 		}
 	} else {
-		file_put_contents('used.txt', 'fail');
+// 		file_put_contents('used.txt', 'fail');
 		// Go to error page
 		header("Location: index.php?site=error");
 		die();
@@ -286,7 +286,7 @@ function createEvent() {
 						if(isset($pricegroup)) {
 							$insert = $connection->query("INSERT INTO veranstaltung_hat_preisgruppe (fk_preisgruppe_id, fk_veranstaltung_id) VALUES ('$pricegroup', '$veranstaltungId')");
 							if($insert == false) {
-								file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltungId . " pricegroupId: " . $pricegroup);
+// 								file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltungId . " pricegroupId: " . $pricegroup);
 								// Go to error page
 								header("Location: index.php?site=error");
 								die();
@@ -300,20 +300,20 @@ function createEvent() {
 
 					return 'Veranstaltung wurde erfolgreich erstellt!';
 				} else {
-					file_put_contents('event-creation-fail.txt', "Event wasn't created...");
+// 					file_put_contents('event-creation-fail.txt', "Event wasn't created...");
 					// Go to error page
 					header("Location: index.php?site=error");
 					die();
 				}
 			} else {
 				// Go to error page
-				file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile . "\ntmp: " . $_FILES['bild']['tmp_name']);
+// 				file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile . "\ntmp: " . $_FILES['bild']['tmp_name']);
 				header("Location: index.php?site=error");
 				die();
 			}
 		} else {
 			// Go to error page
-			file_put_contents('image-not-valid.txt', "Image ain't valid!");
+// 			file_put_contents('image-not-valid.txt', "Image ain't valid!");
 			header("Location: index.php?site=error");
 			die();
 		}
@@ -426,7 +426,7 @@ function deleteEvent() {
 	if($connection->query("DELETE from veranstaltung where ID='$id'") === TRUE) {
 		return 'Preiskategorie wurde erfolgreich gelöscht!';
 	} else {
-		file_put_contents('used.txt', 'fail');
+// 		file_put_contents('used.txt', 'fail');
 		// Go to error page
 		header("Location: index.php?site=error");
 		die();
@@ -503,7 +503,7 @@ if(isset($_POST['name']) && isset($_POST['beschreibung']) && isset($_POST['termi
 					if(isset($pricegroup)) {
 						$update = $connection->query("UPDATE veranstaltung_hat_preisgruppe SET fk_preisgruppe_id='$pricegroup', fk_veranstaltung_id='$veranstaltung_id' WHERE fk_veranstaltung_id='$veranstaltung_id'");
 						if($update == false) {
-							file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltung_id . " pricegroupId: " . $pricegroup . " session-variable: " . $_SESSION['veranstaltung_id']);
+// 							file_put_contents('connection-creation-fail.txt', "connection wasn't created... -- veranstaltungId: " . $veranstaltung_id . " pricegroupId: " . $pricegroup . " session-variable: " . $_SESSION['veranstaltung_id']);
 							// Go to error page
 							header("Location: index.php?site=error");
 							die();
@@ -517,20 +517,20 @@ if(isset($_POST['name']) && isset($_POST['beschreibung']) && isset($_POST['termi
 
 				return 'Veranstaltung wurde erfolgreich angepasst!';
 			} else {
-				file_put_contents('event-creation-fail.txt', "Event wasn't created...");
+// 				file_put_contents('event-creation-fail.txt', "Event wasn't created...");
 				// Go to error page
 				header("Location: index.php?site=error");
 				die();
 			}
 		} else {
 			// Go to error page
-			file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile . "\ntmp: " . $_FILES['bild']['tmp_name']);
+// 			file_put_contents('image-upload-fail.txt', "uploaddir: " . $uploaddir . "\nuploadfile: " . $uploadfile . "\nMoveFile: " . $moveFile . "\ntmp: " . $_FILES['bild']['tmp_name']);
 			header("Location: index.php?site=error");
 			die();
 		}
 	} else {
 		// Go to error page
-		file_put_contents('image-not-valid.txt', "Image ain't valid!");
+// 		file_put_contents('image-not-valid.txt', "Image ain't valid!");
 		header("Location: index.php?site=error");
 		die();
 	}
